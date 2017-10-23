@@ -1,21 +1,19 @@
-# network-config-collector
-Automate network device config collection
+#!/urs/bin/env python
 
 import getpass
 import sys
 import telnetlib
 
 HOST = "172.16.1.101"
-password = getpass.getpass()
+USER = raw_input("Enter UserName: ")
+PASSWORD = getpass.getpass()
 
 tn = telnetlib.Telnet(HOST)
 
 if password:
-    tn.read_until("Password: ")
+    tn.read_until("PASSWORD: ")
     tn.write(password + "\n")
 
-tn.write("enable\n")
-tn.write("cisco\n")
 tn.write("show ip int brief\n")
 tn.write(" ")
 tn.write(" ")
