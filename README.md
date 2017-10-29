@@ -1,27 +1,31 @@
 #!/usr/bin/env python
 import getpass
-import sys
 import telnetlib
 
-HOST = "172.16.1.101"
+# Ask for username and password
 user = raw_input("Enter Username: ")
 password = getpass.getpass()
 
-tn = telnetlib.Telnet(HOST)
+#open myswitch files
+f = open('myswitch')
 
-tn.read_until("Username: ")
-tn.write(user + "\n")
-if password:
+# telnet to device IP in  myswitch file and get show run then save output to new file
+for line in f:
+     print "Get Running config from  Switch " + (line)
+     HOST = line.strip()
+     tn = telnetlib.Telnet(HOST)
+
+     tn.read_until("Username: ")
+     tn.write(user + "\n")
+     if password:
         tn.read_until("Password: ")
         tn.write(password + "\n")
 
-tn.write("conf t\n")
+        tn.write("terminal length 0\n")
+        tn.write("show run\n")
+        tn.write("exit\n")
 
-for n in range (2,10):
-        tn.write("vlan " + str(n) + "\n")
-        tn.write("name Python-VLAN_" + str(n) + "\n")
-
-tn.write("end\n")
-tn.write("exit\n")
-
-print tn.read_all()
+        readoutput = tn.read_all()
+        saveoutput = open("Device" + HOST, "w")
+        saveoutput.write(readoutput)
+        saveoutput.close
