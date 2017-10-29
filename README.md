@@ -1,23 +1,27 @@
-#!/urs/bin/env python
-
+#!/usr/bin/env python
 import getpass
 import sys
 import telnetlib
 
 HOST = "172.16.1.101"
-USER = raw_input("Enter UserName: ")
-PASSWORD = getpass.getpass()
+user = raw_input("Enter Username: ")
+password = getpass.getpass()
 
 tn = telnetlib.Telnet(HOST)
 
+tn.read_until("Username: ")
+tn.write(user + "\n")
 if password:
-    tn.read_until("PASSWORD: ")
-    tn.write(password + "\n")
+        tn.read_until("Password: ")
+        tn.write(password + "\n")
 
-tn.write("show ip int brief\n")
-tn.write(" ")
-tn.write(" ")
-tn.write(" ")
+tn.write("conf t\n")
+
+for n in range (2,10):
+        tn.write("vlan " + str(n) + "\n")
+        tn.write("name Python-VLAN_" + str(n) + "\n")
+
+tn.write("end\n")
 tn.write("exit\n")
 
 print tn.read_all()
